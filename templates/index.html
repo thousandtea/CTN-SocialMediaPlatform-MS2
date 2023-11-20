@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post and Reply</title>
+</head>
+<body>
+    <h1>Post a Message</h1>
+    <form action="/post" method="post">
+        <label for="poster">Poster Name:</label>
+        <input type="text" name="poster" required>
+        <br>
+        <label for="post_content">Post Content:</label>
+        <textarea name="post_content" rows="4" required></textarea>
+        <br>
+        <button type="submit">Post</button>
+    </form>
+
+    <h2>Posts</h2>
+    {% for post in posts %}
+        <p><strong>{{ post.poster }}</strong>: {{ post.content }}</p>
+    {% endfor %}
+
+    <hr>
+
+    <h1>Reply to a Post</h1>
+    <form action="/reply" method="post">
+        <label for="replier_name">Replier Name:</label>
+        <input type="text" name="replier_name" required>
+        <br>
+        <label for="reply_content">Reply Content:</label>
+        <textarea name="reply_content" rows="4" required></textarea>
+        <br>
+        <label for="grades">Grades:</label>
+        <input type="text" name="grades" required>
+        <br>
+        <button type="submit">Reply</button>
+    </form>
+
+    <h2>Replies</h2>
+    {% for reply in replies %}
+        <p><strong>{{ reply.replier }}</strong>: {{ reply.content }} (Grades: {{ reply.grades }})</p>
+    {% endfor %}
+</body>
+</html>
