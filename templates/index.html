@@ -3,44 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
     <title>Post and Reply</title>
 </head>
 <body>
+    <h1>All Message</h1>
+    <h2>Post</h2>
+    <ul class="movie-list">
+        {% for post in posts %}
+            <p><strong>{{ post.name }}</strong>: {{ post.content }}</p>
+        {% endfor %}
+    </ul>
+    <h2>Replies</h2>
+    <ul class="movie-list">
+        {% for reply in replies %}
+            <p><strong>{{ reply.name }}</strong>: {{ reply.content }} (Grades: {{ reply.grade }})</p>
+        {% endfor %}
+    </ul>
+    <hr>
+
     <h1>Post a Message</h1>
     <form action="/post" method="post">
         <label for="poster">Poster Name:</label>
+        <br>
         <input type="text" name="poster" required>
         <br>
         <label for="post_content">Post Content:</label>
+        <br>
         <textarea name="post_content" rows="4" required></textarea>
         <br>
         <button type="submit">Post</button>
     </form>
-
-    <h2>Posts</h2>
-    {% for post in posts %}
-        <p><strong>{{ post.poster }}</strong>: {{ post.content }}</p>
-    {% endfor %}
 
     <hr>
 
     <h1>Reply to a Post</h1>
     <form action="/reply" method="post">
         <label for="replier_name">Replier Name:</label>
+        <br>
         <input type="text" name="replier_name" required>
         <br>
         <label for="reply_content">Reply Content:</label>
+        <br>
         <textarea name="reply_content" rows="4" required></textarea>
         <br>
         <label for="grades">Grades:</label>
+        <br>
         <input type="text" name="grades" required>
         <br>
         <button type="submit">Reply</button>
     </form>
 
-    <h2>Replies</h2>
-    {% for reply in replies %}
-        <p><strong>{{ reply.replier }}</strong>: {{ reply.content }} (Grades: {{ reply.grades }})</p>
+    <hr>
+
+    <h1>Get the first Post for user</h1>
+    <form action="/get" method="GET">
+        <label for="name">User Name:</label>
+        <br>
+        <input type="text" name="user_name" required>
+        <br>
+        <button type="submit">Get</button>
+    </form>
+
+    <h2>Result</h2>
+    {% for get_result in get_result %}
+        <p><strong>{{ get_result.name }}</strong>: {{ get_result.content }}</p>
+    {% endfor %}
+
+    <hr>
+
+    <h1>Update the Post for a user</h1>
+    <form id="updateForm">
+        <label for="key1">User Name:</label>
+        <br>
+        <input type="text" id="key1" name="user_name" required>
+        <br>
+        <label for="key2">Content:</label>
+        <br>
+        <textarea rows="4" id="key2" name="content" required></textarea>
+        <br>
+        <label for="key3">New Content:</label>
+        <br>
+        <textarea rows="4" id="key3" name="new_content" required></textarea>
+        <br>
+        <button type="button" onclick="sendPutRequest()">Update</button>
+    </form>
+
+    <script>
+        function sendPutRequest() {
+            // 获取用户输入的数据
+            var key1Value = document.getElementById('key1').value;
+            var key2Value = document.getElementById('key2').value;
+            var key3Value = document.getElementById('key3').value;
+
+            // 构造PUT请求的数据体
+            var data = {
+                user_name: key1Value,
+                content: key2Value,
+                new_content: key3Value
+            };
+
+            // 发送PUT请求
+            fetch('/update', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'user_name=' + encodeURIComponent(data.user_name) + '&content=' + encodeURIComponent(data.content) + '&new_content=' + encodeURIComponent(data.new_content)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+
+    <h2>Result</h2>
+    {% for put_result in put_result %}
+        <p><strong>{{ put_result.name }}</strong>: {{ put_result.content }}</p>
+    {% endfor %}
+
+
+    <hr>
+
+    <h1>Delete the Post for a user</h1>
+    <form action="/delete" method="delete">
+        <label for="name">User Name:</label>
+        <br>
+        <input id="deleteUserName" type="text" name="user_name" required>
+        <br>
+        <label for="content">Post Content:</label>
+        <br>
+        <textarea id="deletePostContent" name="content" rows="4" required></textarea>
+        <br>
+        <button type="button" onclick="sendDeleteRequest()">Delete</button>
+    </form>
+    <script>
+        function sendDeleteRequest() {
+            // 获取用户输入的数据
+            var userName = document.getElementById('deleteUserName').value;
+            var postContent = document.getElementById('deletePostContent').value;
+
+            // 构造 DELETE 请求的数据体
+            var data = {
+                user_name: userName,
+                content: postContent
+            };
+
+            // 发送 DELETE 请求
+            fetch('/delete', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'user_name=' + encodeURIComponent(data.user_name) + '&content=' + encodeURIComponent(data.content)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+
+    </script>
+    <h2>Result</h2>
+    {% for del_result in del_result %}
+        <p><strong>{{ del_result.name }}</strong>: {{ del_result.content }}</p>
     {% endfor %}
 </body>
 </html>
